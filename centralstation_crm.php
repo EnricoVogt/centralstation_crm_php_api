@@ -11,10 +11,10 @@ class centralstation_crm {
     /**
      * centralstation_crm constructor.
      */
-    public function __construct()
+    public function __construct($apiUrl, $accessKey)
     {
-        $this->apiUrl       = 'https://yourname.centralstationcrm.net/api/';
-        $this->accessKey    = 'youraccesskey';
+        $this->apiUrl       = $apiUrl;
+        $this->accessKey    = $accessKey;
     }
 
     /**
@@ -22,12 +22,12 @@ class centralstation_crm {
      * e.g. people, companies, deals, projects, tasks
      * @return mixed
      */
-    function getEntityMethods($szEntityType)
+    public function getEntityMethods($szEntityType, $methods = 'all')
     {
         $szMethod           = 'GET';
         $szUrl              = $szEntityType.'.json';
         $aData              = array();
-        $aData['methods']   = 'all';
+        $aData['methods']   = $methods;
         $aResponse          = self::sendRequest($szMethod,$szUrl,$aData);
 
         return $aResponse['response'];
@@ -39,7 +39,7 @@ class centralstation_crm {
      * @param $aEntity
      * @return bool
      */
-    function createEntity($szEntityType,$aEntity)
+    public function createEntity($szEntityType,$aEntity)
     {
         $szMethod   = 'POST';
         $szUrl      = $szEntityType.'.json';
@@ -62,7 +62,7 @@ class centralstation_crm {
      * @param $aEntitySub
      * @return bool
      */
-    function createEntitySubDetail($szEntityType,$szEntityId,$szEntitySubType,$aEntitySub)
+    public function createEntitySubDetail($szEntityType,$szEntityId,$szEntitySubType,$aEntitySub)
     {
         $szMethod   = 'POST';
         $szUrl      = $szEntityType.'/'.$szEntityId.'/'.$szEntitySubType.'.json';
@@ -81,7 +81,7 @@ class centralstation_crm {
      * e.g. people, companies, deals, projects, tasks
      * @return mixed
      */
-    function getEntityList($szEntityType)
+    public function getEntityList($szEntityType)
     {
         $szMethod   = 'GET';
         $szUrl      = $szEntityType.'.json';
@@ -101,11 +101,11 @@ class centralstation_crm {
      * @param $szEntityId
      * @return bool
      */
-    function getEntityDetail($szEntityType,$szEntityId)
+    public function getEntityDetail($szEntityType,$szEntityId, $includes = 'all')
     {
         $szMethod               = 'GET';
         $szUrl                  = $szEntityType.'/'.$szEntityId.'.json';
-        $aData['includes']      = 'all';
+        $aData['includes']      = $includes;
         $aResponse              = self::sendRequest($szMethod,$szUrl,$aData);
 
         if ($aResponse['code'] == '200')
@@ -125,11 +125,11 @@ class centralstation_crm {
      * @param $szEntitySubId
      * @return bool
      */
-    function getEntitySubDetail($szEntityType,$szEntityId,$szEntitySubType,$szEntitySubId)
+    public function getEntitySubDetail($szEntityType,$szEntityId,$szEntitySubType,$szEntitySubId,$includes = 'all')
     {
         $szMethod               = 'GET';
         $szUrl                  = $szEntityType.'/'.$szEntityId.'/'.$szEntitySubType.'/'.$szEntitySubId.'.json';
-        $aData['includes']      = 'all';
+        $aData['includes']      = $includes;
         $aResponse              = self::sendRequest($szMethod,$szUrl,$aData);
 
         if ($aResponse['code'] == '200')
@@ -147,7 +147,7 @@ class centralstation_crm {
      * @param $aEntity
      * @return bool
      */
-    function updateEntityDetail($szEntityType,$szEntityId,$aEntity)
+    public function updateEntityDetail($szEntityType,$szEntityId,$aEntity)
     {
         $szMethod   = 'PUT';
         $szUrl      = $szEntityType.'/'.$szEntityId.'.json';
@@ -171,7 +171,7 @@ class centralstation_crm {
      * @param $szEntitySubId
      * @return bool
      */
-    function updateEntitySubDetail($szEntityType,$szEntityId,$szEntitySubType,$szEntitySubId,$aEntitySub)
+    public function updateEntitySubDetail($szEntityType,$szEntityId,$szEntitySubType,$szEntitySubId,$aEntitySub)
     {
         $szMethod   = 'PUT';
         $szUrl      = $szEntityType.'/'.$szEntityId.'/'.$szEntitySubType.'/'.$szEntitySubId.'.json';
@@ -191,7 +191,7 @@ class centralstation_crm {
      * @param $aData
      * @return array
      */
-    function sendRequest ($szMethod,$szUrl,$aData = array())
+    private static function sendRequest ($szMethod,$szUrl,$aData = array())
     {
         $aResponse          = array();
         $aData['apikey']    = $this->accessKey;
