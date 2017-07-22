@@ -191,7 +191,7 @@ class centralstation_crm {
      * @param $aData
      * @return array
      */
-    private static function sendRequest ($szMethod,$szUrl,$aData = array())
+    private function sendRequest ($szMethod,$szUrl,$aData = array())
     {
         $aResponse          = array();
         $aData['apikey']    = $this->accessKey;
